@@ -8,6 +8,9 @@ var Task = {
     },
     addUser: function(user, callback){
         return db.query("insert into users (FirstName, LastName) values (?,?)", [user.FirstName, user.LastName], callback );        
+    },
+    checkUserExists: function(user, callback){
+        return db.query("select count(*) as result from users where FirstName=? and LastName=?",[user.FirstName, user.LastName], callback);
     }
 };
 
