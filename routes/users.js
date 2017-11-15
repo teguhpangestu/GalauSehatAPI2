@@ -23,6 +23,22 @@ router.get('/:id?', function(req, res, next) {
 }  
 });
 
+router.post('/', function(req, res, next){
+    //res.render(req.body);
+    Task.addUser(req.body, function(err, count){
+        if (err){
+            res.json(err);
+            //console.log(err);
+            //res.render('index', { title: err });
+        } else {
+            res.json(req.body);
+            //console.log(err);
+            //res.render('index', { title: 'Success' });
+        }
+    });
+});
+
+
 
 
 module.exports = router;

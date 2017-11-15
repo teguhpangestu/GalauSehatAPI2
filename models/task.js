@@ -5,7 +5,13 @@ var Task = {
     },
     getUserById: function(id, callback){
         return db.query("select * from users where id=?",[id], callback);
+    },
+    addUser: function(user, callback){
+        return db.query("insert into users (FirstName, LastName) values (?,?)", [user.FirstName, user.LastName], callback );        
     }
 };
+
+
+
 
 module.exports = Task;
