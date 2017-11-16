@@ -24,7 +24,7 @@ router.get('/:id?', function(req, res, next) {
 }); 
 
 router.post('/', function(req, res, next){
-    if (req.body != null){
+    if (Object.keys(req.body).length !== 0){
         Task.checkUserExists(req.body, function(err, data){
             if (err){
                 res.json(err);
@@ -35,14 +35,18 @@ router.post('/', function(req, res, next){
                         if (err){
                             res.json(err);                        
                         } else {
-                            res.json(req.body);                        
+                            res.status(200).send("User inserted")
+                            //res.json("User inserted");                        
                         }
                     });
                 } else {
-                    res.json("User already exists");
+                    res.status(500).send("User exists")
+                    //res.json("User already exists");
                 }
             }     
         });
+    } else {
+        res.json("req.body is empty");
     }
     
     
