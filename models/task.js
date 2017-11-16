@@ -11,6 +11,12 @@ var Task = {
     },
     checkUserExists: function(user, callback){
         return db.query("select count(*) as result from users where FirstName=? and LastName=?",[user.FirstName, user.LastName], callback);
+    },
+    deleteUser: function(id, callback){
+        return db.query("delete from users where Id=?", [id], callback);
+    },
+    updateUser: function(id, user, callback){
+        return db.query("update users set FirstName=?, LastName=? where Id=?",[user.FirstName, user.LastName, id],callback);
     }
 };
 

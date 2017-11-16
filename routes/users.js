@@ -21,40 +21,51 @@ router.get('/:id?', function(req, res, next) {
         }  
     });  
 }  
-});
+}); 
 
 router.post('/', function(req, res, next){
-    //res.render(req.body);
-    Task.checkUserExists(req.body, function(err, data){
-        if (err){
-            res.json(err);
-        } else {
-            //var obj = JSON.stringify(data);
-            //var x = JSON.parse(obj);
-            //res.json(x);
-            
-            //console.log(count.result);
-            // var obj = JSON.parse(count);
-            
-            if (data.result == "0"){
-                res.json("Ok");
-            } else {
-                res.json("Not Ok");
-            }
+    if (req.body != null){
+        Task.checkUserExists(req.body, function(err, data){
+            if (err){
+                res.json(err);
+            } else {                      
+                if (data[0].result == '0'){ //user not exists
+                    //res.json("Ok");
+                    Task.addUser(req.body, function(err, count){
+                        if (err){
+                            res.json(err);                        
+                        } else {
+                            res.json(req.body);                        
+                        }
+                    });
+                } else {
+                    res.json("User already exists");
+                }
+            }     
+        });
+    }
+    
+    
+});
 
-        }     
-    });
-    /*Task.addUser(req.body, function(err, count){
+router.delete('/:id', function(req, res, next){
+    Task.deleteUser(req.params.id, function(err, data){
         if (err){
             res.json(err);
-            //console.log(err);
-            //res.render('index', { title: err });
         } else {
-            res.json(req.body);
-            //console.log(err);
-            //res.render('index', { title: 'Success' });
+            res.json(data);
         }
-    });*/
+    });
+});
+
+router.put('/:id', function(req, res, next){
+    Task.updateUser(req.params.id, req.body, function(err, data){
+        if (err){
+            res.json(err);
+        } else {
+            res.json(data);
+        }
+    });
 });
 
 
