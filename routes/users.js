@@ -40,7 +40,7 @@ router.post('/', function(req, res, next){
                         }
                     });
                 } else {
-                    res.status(500).send("User exists")
+                    res.status(409).send("User exists") //409 - for conflict/exists
                     //res.json("User already exists");
                 }
             }     
