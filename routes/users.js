@@ -7,46 +7,67 @@ router.get('/:id?', function(req, res, next) {
   if (req.params.id) {  
     Task.getUserById(req.params.id, function(err, rows) {  
         if (err) {  
-            res.json(err);  
+            res.status(500).send(err);  
         } else {  
-            res.json(rows);  
+            if (Object.keys(rows).length == 0){
+                res.status(404).send("User not found");
+            } else {
+                res.status(200).send(rows);
+            }
+              
         }  
     });  
 } else {  
     Task.getAllUsers(function(err, rows) {  
         if (err) {  
-            res.json(err);  
+            res.status(500).send(err); 
         } else {  
-            res.json(rows);  
+            if (Object.keys(rows).length == 0){
+                res.status(404).send("User list not found");
+            } else {
+                res.status(200).send(rows);
+            }
+              
         }  
     });  
 }  
 }); 
 
+router.get('/login', function(req, res, next){
+    Task.userLogin(re)
+});
+
 router.post('/', function(req, res, next){
-    if (Object.keys(req.body).length !== 0){
+    if (Object.keys(req.body).length !== 0){      
+
         Task.checkUserExists(req.body, function(err, data){
             if (err){
-                res.json(err);
+                res.status(500).send(err);
             } else {                      
                 if (data[0].result == '0'){ //user not exists
-                    //res.json("Ok");
-                    Task.addUser(req.body, function(err, count){
-                        if (err){
-                            res.json(err);                        
-                        } else {
-                            res.status(200).send("User inserted")
-                            //res.json("User inserted");                        
-                        }
+                    
+                    // encrypt password
+                    var bcrypt = require('bcrypt');
+                    bcrypt.genSalt(10, function(err, salt){
+                        bcrypt.hash(req.body.password, salt, function(err, hash){
+                            req.body.password = hash;
+                            //res.status(200).send(hash);
+                            Task.addUser(req.body, function(err, count){
+                                if (err){
+                                    res.status(500).send(err);                        
+                                } else {
+                                    res.status(200).send("User inserted")                                                  
+                                }
+                            });
+                        })
                     });
                 } else {
-                    res.status(409).send("User exists") //409 - for conflict/exists
-                    //res.json("User already exists");
+                    res.status(409).send("User exists") //409 - for conflict/exists                    
                 }
             }     
         });
     } else {
-        res.json("req.body is empty");
+        res.status(500).send("req.body is empty");
     }
     
     
@@ -55,9 +76,9 @@ router.post('/', function(req, res, next){
 router.delete('/:id', function(req, res, next){
     Task.deleteUser(req.params.id, function(err, data){
         if (err){
-            res.json(err);
+            res.status(500).send(err);
         } else {
-            res.json(data);
+            res.status(200).send(data);
         }
     });
 });
@@ -65,9 +86,9 @@ router.delete('/:id', function(req, res, next){
 router.put('/:id', function(req, res, next){
     Task.updateUser(req.params.id, req.body, function(err, data){
         if (err){
-            res.json(err);
+            res.status(500).send(err);
         } else {
-            res.json(data);
+            res.status(200).send(data);
         }
     });
 });
