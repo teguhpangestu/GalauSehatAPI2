@@ -19,6 +19,9 @@ var Task = {
     updateUser: function(id, user, callback){
         return db.query("update users set firstname=?, lastname=? where Id=?",[user.firstname, user.lastname, id],callback);
     },
+    userLogin: function(login, callback){
+        return db.query("select * from users where username=? or email=?", [login,login], callback);
+    }
     
 };
 
